@@ -1,23 +1,31 @@
+from pprint import pprint
+import urllib.request
+import os
 import sys
+import pbxplore as pbx
 
-file_pdb = sys.argv[1]
-print(sys.argv[1])
+"""
+Creer classe avec soit :
+- nom structure
+- nombre chaines
+- nombre de frame
+Dataframe :
+- liste de liste avec assignation de l'alphabet
+"""
+input_topology, _ = [sys.argv[1],sys.argv[1]] #gro
+input_trajectory, _ = [sys.argv[2],sys.argv[2]] #xtc
+print(input_topology, input_trajectory)
 
-with open(file_pdb,"r") as file_pdb:
-    res_count = 0
-    for line in file_pdb:
-        if line[0:6].strip() == "ATOM":
-            atom_name = line[12:16].strip()
-            res_name = line[17:20].strip()
-            res_num = int(line[22:26])
-            if atom_name == "CA":
-                res_count += 1
-                x = float(line[30:38])
-                y = float(line[38:46])
-                z = float(line[46:54])
-                print(res_name, res_num, x, y, z)
-"""
-Extract from a pdb file the xyz coordonées 
-"""
+class Structure_assign():
+    def __init__(self, input_topology, input_trajectory):
+	    for chain_name, chain in pbx.chains_from_trajectory(input_trajectory, input_topology):
+	        dihedrals = chain.get_phi_psi_angles()
+	        pb_seq = pbx.assign(dihedrals)
+	        print('* {}'.format(chain_name))
+	        print('  {}'.format(pb_seq))
+
 #### MAIN ####
+
+dt = Structure_assign(input_topology, input_trajectory)
+
 
