@@ -30,8 +30,16 @@ class StructureAssign():
 class Statistique():
     def __init__(self, sa_md):
         self.sa_md = sa_md
-
-    def shannon_entropy(self):
+    def matrice_proba_positions(self):
+        """
+        compte le nombre de lettre du SA dans la MD 
+        """
+        nSA = {"a":0,"b":0,"c":0,"d":0,"e":0,"f":0,"g":0,"h":0,"i":0,"j":0,"k":0,"l":0,"m":0,"n":0,"o":0,"p":0,"Z":0}
+        for i in range(len(self.sa_md)):
+            for j in range(len(self.sa_md[0])):
+                nSA[self.sa_md[i][j]] +=1
+        print(nSA)    
+    def mutual_information(self):
         print(len(self.sa_md),len(self.sa_md[0]))
         #for i in range(len(self.sa_md[])):
         
@@ -43,6 +51,6 @@ class Statistique():
 dt = StructureAssign(input_topology, input_trajectory)
 print(dt.sa_md[1][1])
 stat = Statistique(dt.sa_md)
-stat.shannon_entropy()
-
+stat.mutual_information()
+stat.matrice_proba_positions()
 
