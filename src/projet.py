@@ -46,67 +46,60 @@ class Statistique():
         nLetters = len(self.sa_md[0])
         nFrames = len(self.sa_md)
 
-        mat_probabilities = pd.DataFrame(np.zeros((AS_SIZE,len(self.sa_md[0]))), index = AS_LETTERS)
-        print(mat_probabilities)
-        print(len(self.sa_md[0]),len(self.sa_md))
-        print(nSA)
-        print(nSA[0])
-        print(nSA[0]["a"])
+        mat_probabilities = pd.DataFrame(np.zeros(AS_SIZE), index = AS_LETTERS)
 
-        for i in range(len(self.sa_md[0])):
-            for j in range(len(self.sa_md)):
-                nSA[0][self.sa_md[j][i]] +=1
-
-            for k in AS_LETTERS:
-                if nSA[0][k] == 0:          
-                    mat_probabilities[i][k] = 0
-                    
-                else:
-                    mat_probabilities[i][k] = nSA[0][k]/len(self.sa_md) 
-
-                nSA[0][k] = 0
-
-        print( mat_probabilities)
+        for i in range(len(self.sa_md)):
+            for j in range(len(self.sa_md[0])):
+                mat_probabilities[0][self.sa_md[i][j]] += 1
+                
+        return(mat_probabilities/(len(self.sa_md)*len(self.sa_md[0])))
         
+     
 
+    def matrice_p_ab(self):
+
+        mat_count_occurence = pd.DataFrame(np.zeros((AS_SIZE, AS_SIZE)), columns = AS_LETTERS, index = AS_LETTERS) 
+
+        for i in range(len(self.sa_md)-1):
+            for j in range(len(self.sa_md[0])):
+                mat_count_occurence[self.sa_md[i][j]][self.sa_md[i+1][j]] += 1
+        
          
-"""
-    def matrice_p_ab(self, A, B):
-
-        mat_count_occurence = pd.DataFrame(np.zeros((17,17)), columns = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","Z"],\
-        index = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","Z"]) # FIXME : taille matrice en dur
-
-        for i in range(len(A)):
-            mat_count_occurence[A[i]][B[i]] += 1
-        print(mat_count_occurence) 
         ####probabilité jointe ####
-        
-        print(mat_count_occurence/(len(self.sa_md[0])/2))
-        
+        print(mat_count_occurence/(len(self.sa_md)*len(self.sa_md[0])))
+        return(mat_count_occurence/(len(self.sa_md)*len(self.sa_md[0])))
+
     def mutual_information(self):
         print(len(self.sa_md),len(self.sa_md[0]))
         
-        MI = pd.DataFrame(np.zeros(len(self.sa_md[0]),len(self.sa_md[0])))
-        mat_pa = self.matrice_p_a()
+        MI = pd.DataFrame(np.zeros((len(self.sa_md[0]),len(self.sa_md[0]))))
         
-        for i in range(len(self.sa_md)):
-            for j in range(len(self.sa_md)):
-                mat_p_ab = matrice_p_ab(self.sa_md[0:len(self.sa_md)][i],\
-                                       self.sa_md[0:len(self.sa_md)][j])
-                for k in SA_LETTERS:
-                    for l in range(SA_LETTERS):    
-                        I = mat_p_ab[k][l]*np.log2(mat_p_ab[k][l]/(mat_p_a[k][l]*mat_p_a[k][l]))
+        mat_p_a = self.matrice_p_a()
+        mat_p_ab = self.matrice_p_ab()
         
+        for i in range(len(self.sa_md[0])):
+            for j in range(0, len(self.sa_md[0])): ## pour remplir MI
+                I = 0.
+                for k in range(len(self.sa_md)):#Pour iterer sur les frame FIXME 
+                    if mat_p_ab[self.sa_md[k][i]][self.sa_md[k][j]] == 0 or mat_p_a[0][self.sa_md[k][i]] == 0 or mat_p_a[0][self.sa_md[k][j]] == 0:  
+                        I += 0
+                    else:               
+                        I += mat_p_ab[self.sa_md[k][i]][self.sa_md[k][j]]*\
+                    np.log2(mat_p_ab[self.sa_md[k][i]][self.sa_md[k][j]]/\
+                    (mat_p_a[0][self.sa_md[k][i]]*mat_p_a[0][self.sa_md[k][j]]))
+       
+                MI[i][j] = I
         print(MI)
-        """
+        
 #### MAIN ####
 
 dt = StructureAssign(input_topology, input_trajectory)
 print(dt.sa_md[1][1])
 stat = Statistique(dt.sa_md)
 
-stat.matrice_p_a()
-#stat.mutual_information()
+#stat.matrice_p_a()
+#stat.matrice_p_ab()
+stat.mutual_information()
 
 
 
