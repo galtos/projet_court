@@ -41,26 +41,30 @@ class Statistique():
 
         #compte le nombre de lettre du SA dans la MD 
 
-        nSA = {"a":0,"b":0,"c":0,"d":0,"e":0,"f":0,"g":0,"h":0,"i":0,"j":0,"k":0,"l":0,"m":0,"n":0,"o":0,"p":0,"Z":0}
+        nSA = pd.DataFrame(np.zeros(AS_SIZE), index = AS_LETTERS)
       
         nLetters = len(self.sa_md[0])
         nFrames = len(self.sa_md)
 
-        mat_probabilities = pd.DataFrame(np.zeros((AS_SIZE,len(self.sa_md[0]))), index = AS_SIZE)
+        mat_probabilities = pd.DataFrame(np.zeros((AS_SIZE,len(self.sa_md[0]))), index = AS_LETTERS)
         print(mat_probabilities)
+        print(len(self.sa_md[0]),len(self.sa_md))
+        print(nSA)
+        print(nSA[0])
+        print(nSA[0]["a"])
 
         for i in range(len(self.sa_md[0])):
             for j in range(len(self.sa_md)):
-                nSA[self.sa_md[j][i]] +=1
+                nSA[0][self.sa_md[j][i]] +=1
 
-            for k in nSA:
-                if nSA[k] == 0:
+            for k in AS_LETTERS:
+                if nSA[0][k] == 0:          
+                    mat_probabilities[i][k] = 0
                     
-                    mat_probabilities[k][i] = 0
                 else:
-                    mat_probabilities[k][i] = nSA[k]/len(self.sa_md) 
+                    mat_probabilities[i][k] = nSA[0][k]/len(self.sa_md) 
 
-                nSA[k] = 0
+                nSA[0][k] = 0
 
         print( mat_probabilities)
         
