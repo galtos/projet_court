@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import pymol
 import pbxplore as pbx
 
 AS_SIZE = 17
@@ -21,6 +22,8 @@ Dataframe :
 """
 input_topology,_ = [sys.argv[1],sys.argv[1]] #gro
 input_trajectory,_ = [sys.argv[2],sys.argv[2]] #xtc
+input_pdb = sys.argv[3]
+
 print(input_topology, input_trajectory)
 
 class StructureAssign():
@@ -100,7 +103,12 @@ class Visualisation():
 
         sns.heatmap(self.matrice_MI)
         plt.show()
-        
+    def show_pymol_network(self):
+        pymol.finish_launching(["pymol","-q"]) 
+        for i in range(len(self.matrice_MI)):
+            for j in range(len(self.matrice_MI)):
+                if self.matrice_MI[i][j] > SEUIL:
+                    cmd.distance("resi"+string(i),"resi"+string(j))
 #### MAIN ####
 
 dt = StructureAssign(input_topology, input_trajectory)
@@ -109,9 +117,16 @@ stat = Statistique(dt.sa_md)
 
 #stat.matrice_p_a()
 #stat.matrice_p_ab()
-MI = stat.mutual_information()
+#MI = stat.mutual_information()
 #MI = [[1,2,3],[1,1,1],[3,3,3]]
 mat_visual = Visualisation(MI)
-mat_visual.visualize_matrice_mi()
+#mat_visual.visualize_matrice_mi()
+mat_visual.show_pymol_network()
+
+
+
+
+
+
 
 
