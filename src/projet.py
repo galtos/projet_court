@@ -4,6 +4,8 @@ import os
 import sys
 import numpy as np
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 import pbxplore as pbx
 
 AS_SIZE = 17
@@ -89,7 +91,15 @@ class Statistique():
                     (mat_p_a[0][self.sa_md[k][i]]*mat_p_a[0][self.sa_md[k][j]]))
        
                 MI[i][j] = I
-        print(MI)
+        return(MI)
+        
+class Visualisation():
+    def __init__(self, matrice_MI):
+        self.matrice_MI = matrice_MI
+    def visualize_matrice_mi(self):
+
+        sns.heatmap(self.matrice_MI)
+        plt.show()
         
 #### MAIN ####
 
@@ -99,8 +109,9 @@ stat = Statistique(dt.sa_md)
 
 #stat.matrice_p_a()
 #stat.matrice_p_ab()
-stat.mutual_information()
-
-
+MI = stat.mutual_information()
+#MI = [[1,2,3],[1,1,1],[3,3,3]]
+mat_visual = Visualisation(MI)
+mat_visual.visualize_matrice_mi()
 
 
