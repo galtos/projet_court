@@ -95,6 +95,10 @@ class Statistique():
         return(mat_count_occurence/\
               (len(self.md_sa_seq)*len(self.md_sa_seq[0])))
     def mutual_information_i(self, i, j, mat_p_a, mat_p_ab):
+        """
+        Compute the mutual information for two sets of positions in the structure
+        I(X;Y) =  ∑ P(x;y)*log(P(x;y)/(P(x)*P(y)))
+        """
         I = 0
         for k in range(len(self.md_sa_seq)): 
                 if mat_p_ab[self.md_sa_seq[k][i]]\
@@ -131,7 +135,11 @@ class Statistique():
 class Visualisation():
     def __init__(self, matrice_MI):
         self.matrice_MI = matrice_MI
+        
     def write_mi_csv(self, args):
+        """
+        Write a csv file containing the utual inforamtion matrix
+        """
         file_csv = open(args.omi,"w")
         for i in range(len(self.matrice_MI)):
             for j in range(len(self.matrice_MI)):
@@ -139,11 +147,18 @@ class Visualisation():
             file_csv.write("\n")
         file_csv.close()       
     def visualize_matrice_mi(self):
-
+        """
+        Represent the mutual information matrix in form of a heatmap
+        """
         sns.heatmap(self.matrice_MI)
         plt.show()
 
     def color_palette(self):
+        """
+        r,g,b numbers for the color palette to visualize with pymol 
+        the important residues involved in the network.
+        The colors goes from the blue to red.
+        """
         color =[[ 0.00,  0.00,  1.00],\
                 [ 0.24,  0.16,  0.75],\
                 [ 0.36,  0.24,  0.63],\
@@ -159,6 +174,12 @@ class Visualisation():
         
             
     def show_pymol_network(self, input_pdb):
+        """
+        launch pymol and read a pml file which color the résidues according their 
+        significance in the network made with the mutual information. Put a line between 
+        the important residues (>treshold).
+        the treshold is is the maximum value of the matrix divided by 2 but can be given by the user
+        """
         input_pymol = open("pymol_tmp.pml","w")
         input_pymol.write("load "+input_pdb+"\n")
         input_pymol.write("set dash_gap, 0\n")
@@ -166,14 +187,12 @@ class Visualisation():
         input_pymol.write("preset.pretty(selection='all')\n")
         
         line_treshold = np.max(np.max(self.matrice_MI))/2
-        print(line_treshold)
         
         color = np.max(self.matrice_MI)/np.max(np.max(self.matrice_MI))
 
         color = 10*(color - color.min()) / (color.max() - color.min())
         palette = self.color_palette()
-        print(palette)
-        print(color)
+
         for i in range(len(self.matrice_MI)):
             input_pymol.write("set_color color_{} =   [{} , {} , {}]\n".format(i,\
                                 palette[int(color[i])][0],\
@@ -200,9 +219,12 @@ if __name__=="__main__":
     
     parser = argparse.ArgumentParser()
     
-    parser.add_argument("-f", nargs = "?", help = "output a fasta file containing the generated structural alphabet", const = "pbxplore_sequence.fasta")
-    parser.add_argument("-py", nargs = "?", help = "generate the structure network according to the MI matrix on pymol\ntake in argument the pdb file of the structure")
-    parser.add_argument("-omi", nargs = "?", help = "generate an output file containing the mutual information matrix ", const = "mi_matrix.csv")
+    parser.add_argument("-f", nargs = "?",  \
+     help = "output a fasta file containing the generated structural alphabet", const = "pbxplore_sequence.fasta")
+    parser.add_argument("-py", nargs = "?", \
+     help = "generate the structure network according to the MI matrix on pymol\ntake in argument the pdb file of the structure")
+    parser.add_argument("-omi", nargs = "?",\
+     help = "generate an output file containing the mutual information matrix ", const = "mi_matrix.csv")
     
     parser.add_argument("input_topology", help = "number of molecular dynamics to analyse")
     parser.add_argument("input_trajectory", help = "number of molecular dynamics to analyse")
