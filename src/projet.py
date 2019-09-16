@@ -1,10 +1,10 @@
 import sys
+import os
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import argparse
-#import pymol
 import pbxplore as pbx
 
 SA_SIZE = 17
@@ -137,21 +137,30 @@ class Visualisation():
         plt.show()
 
         
-"""
-    def show_pymol_network(self):
-        pymol.finish_launching(["pymol","-q"]) 
+    def show_pymol_network(self, input_pdb):
+        input_pymol = open("tmp.pml","w")
+        input_pymol.write("load "+input_pdb+"\n")
+
         for i in range(len(self.matrice_MI)):
-            for j in range(len(self.matrice_MI)):
-                if self.matrice_MI[i][j] > SEUIL:
-                    cmd.distance("resi"+string(i),"resi"+string(j))
-"""
+            for j in range(i, len(self.matrice_MI)):
+                if self.matrice_MI[i][j] > 40:
+                    input_pymol.write("distance {}_{},".format(i + 1,j + 1)+\
+            "name CA and resi {}, ".format(i + 1)+ "name CA and resi {}\n".format(j + 1))
+                    input_pymol.write("hide labels, "+"{}_{}\n".format(i + 1,j + 1))
+
+        input_pymol.close()
+        os.system("pymol -p tmp.pml")
+
+ 
+
+
 #### MAIN ####
 if __name__=="__main__":
     
     parser = argparse.ArgumentParser()
     
     parser.add_argument("-f", nargs = "?", help = "output a fasta file containing the generated structural alphabet", const = "pbxplore_sequence.fasta")
-
+    parser.add_argument("-py", nargs = "?", help = "generate the structure network according to the MI matrix on pymol")
 
     parser.add_argument("input_topology", help = "number of molecular dynamics to analyse")
     parser.add_argument("input_trajectory", help = "number of molecular dynamics to analyse")
@@ -166,11 +175,13 @@ if __name__=="__main__":
 
     #stat.matrice_p_a()
     #stat.matrice_p_ab()
-    ##MI = stat.mutual_information()
+    MI = stat.mutual_information()
     #MI = [[1,2,3],[1,1,1],[3,3,3]]
-    ##mat_visual = Visualisation(MI)
+    mat_visual = Visualisation(MI)
     ##mat_visual.visualize_matrice_mi()
-    #mat_visual.show_pymol_network()
+    if args.py:
+        print("TEST")
+        mat_visual.show_pymol_network(args.py)
 
 
 
