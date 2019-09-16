@@ -131,6 +131,13 @@ class Statistique():
 class Visualisation():
     def __init__(self, matrice_MI):
         self.matrice_MI = matrice_MI
+    def write_mi_csv(self, args):
+        file_csv = open(args.omi,"w")
+        for i in range(len(self.matrice_MI)):
+            for j in range(len(self.matrice_MI)):
+                file_csv.write("{},".format(self.matrice_MI[i][j]))
+            file_csv.write("\n")
+        file_csv.close()       
     def visualize_matrice_mi(self):
 
         sns.heatmap(self.matrice_MI)
@@ -195,7 +202,8 @@ if __name__=="__main__":
     
     parser.add_argument("-f", nargs = "?", help = "output a fasta file containing the generated structural alphabet", const = "pbxplore_sequence.fasta")
     parser.add_argument("-py", nargs = "?", help = "generate the structure network according to the MI matrix on pymol\ntake in argument the pdb file of the structure")
-
+    parser.add_argument("-omi", nargs = "?", help = "generate an output file containing the mutual information matrix ", const = "mi_matrix.csv")
+    
     parser.add_argument("input_topology", help = "number of molecular dynamics to analyse")
     parser.add_argument("input_trajectory", help = "number of molecular dynamics to analyse")
     
@@ -211,9 +219,9 @@ if __name__=="__main__":
     #MI2 = [[1,2,3],[1,1,1],[3,3,3]]
     mat_visual = Visualisation(MI)
     ##mat_visual.visualize_matrice_mi()
+    mat_visual.write_mi_csv(args)
     print(MI)
     if args.py:
-
         mat_visual.show_pymol_network(args.py)
 
 
