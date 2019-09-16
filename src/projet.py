@@ -136,19 +136,47 @@ class Visualisation():
         sns.heatmap(self.matrice_MI)
         plt.show()
 
-
+    def color_palette(self):
+        color =[[ 0.00,  0.00,  1.00],\
+                [ 0.24,  0.16,  0.75],\
+                [ 0.36,  0.24,  0.63],\
+                [ 0.53,  0.34,  0.47],\
+                [ 0.77,  0.50,  0.22],\
+                [ 1.00,  0.63,  0.00],\
+                [ 1.00,  0.50,  0.00],\
+                [ 1.00,  0.37,  0.00],\
+                [ 1.00,  0.24,  0.00],\
+                [ 1.00,  0.10,  0.00],\
+                [ 1.00,  0.00,  0.00]]
+        return color
+        
             
     def show_pymol_network(self, input_pdb):
-        input_pymol = open("tmp.pml","w")
+        input_pymol = open("pymol_tmp.pml","w")
         input_pymol.write("load "+input_pdb+"\n")
         input_pymol.write("set dash_gap, 0\n")
         input_pymol.write("set dash_width, 2\n")
+        input_pymol.write("preset.pretty(selection='all')\n")
         
-        line_treshold = sum(self.matrice_MI)/(len(self.matrice_MI)**2)
+        line_treshold = np.max(np.max(self.matrice_MI))/2
+        print(line_treshold)
+        
+        color = np.max(self.matrice_MI)/np.max(np.max(self.matrice_MI))
 
+        color = 10*(color - color.min()) / (color.max() - color.min())
+        palette = self.color_palette()
+        print(palette)
+        print(color)
         for i in range(len(self.matrice_MI)):
+            input_pymol.write("set_color color_{} =   [{} , {} , {}]\n".format(i,\
+                                palette[int(color[i])][0],\
+                                palette[int(color[i])][1],\
+                                palette[int(color[i])][2]))
+            input_pymol.write("color color_{}, resi {}\n".format(i,i+1))
+        
             for j in range(i, len(self.matrice_MI)):
                 if self.matrice_MI[i][j] > line_treshold:
+
                     input_pymol.write("distance {}_{},".format(i + 1,j + 1)+\
             "name CA and resi {}, ".format(i + 1)+ "name CA and resi {}\n".format(j + 1))
                     input_pymol.write("hide labels, "+"{}_{}\n".format(i + 1,j + 1))
@@ -156,8 +184,7 @@ class Visualisation():
                     
 
         input_pymol.close()
-        os.system("pymol -p tmp.pml")
-        os.system("rm tmp.pml")
+        os.system("pymol -p pymol_tmp.pml")
  
 
 
@@ -173,12 +200,7 @@ if __name__=="__main__":
     parser.add_argument("input_trajectory", help = "number of molecular dynamics to analyse")
     
     args = parser.parse_args()
-    if args.py:
-        print("You asked for the network vizualisation with pymol" + \
-              "Do you want to keep the treshold from the program\n" + \
-              "(the mean betwen the maximum value of the mutual " +\
-              "information and the minimum value (y/n):")
-        #FIXME
+
     dt = AssignationPbxplore(args.input_topology, args.input_trajectory, args)
 
     stat = Statistique(dt.md_sa_seq)
@@ -189,9 +211,9 @@ if __name__=="__main__":
     #MI2 = [[1,2,3],[1,1,1],[3,3,3]]
     mat_visual = Visualisation(MI)
     ##mat_visual.visualize_matrice_mi()
-    
+    print(MI)
     if args.py:
-        print("TEST")
+
         mat_visual.show_pymol_network(args.py)
 
 
