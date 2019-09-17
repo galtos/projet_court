@@ -3,21 +3,22 @@
 """
 Read a molecular dynamics and assign for each frames protein blocs[1]
 The program then compue the mutual information matrix and represent the matrix
-in the form of an heatmap and/or a structure network with pymol[2]. This program
-is inspired from GSATools[3].
+in the form of an heatmap and/or a structure network with pymol[2].
+This program is inspired by GSATools[3].
 
 2019 - Guillaume OLLITRAULT
 
 [1]
 Barnoud J, Santuz H, Craveur P, Joseph AP, Jallu V, de Brevern AG, Poulain P,
-PBxplore: a tool to analyze local protein structure and deformability with Protein Blocks
+PBxplore: a tool to analyze local protein structure and deformability with
+Protein Blocks.
 PeerJ 5:e4013 https://doi.org/10.7717/peerj.4013 (2017).
 [2]
 The PyMOL Molecular Graphics System, Version 1.8.4.0 Schrödinger, LLC.
 [3]
 Pandini A, Fornili A, Fraternali F, Kleinjung J
-"GSATools: analysis of allosteric communication and functional local motions
- using a Structural Alphabet"
+GSATools: analysis of allosteric communication and functional local motions
+using a Structural Alphabet
 Bioinformatics 29(16):2053-2055, 2013
 """
 
