@@ -86,10 +86,10 @@ class Statistique():
                                      np.zeros((SA_SIZE, SA_SIZE)),\
                                      columns = SA_LETTERS, index = SA_LETTERS) 
 
-        for i in range(len(self.md_sa_seq)):
-            for j in range(len(self.md_sa_seq[0])-1):
+        for i in range(len(self.md_sa_seq)-1):
+            for j in range(len(self.md_sa_seq[0])):
                 mat_count_occurence[self.md_sa_seq[i][j]]\
-                                   [self.md_sa_seq[i][j+1]] += 1
+                                   [self.md_sa_seq[i+1][j]] += 1
         
         ####probabilité jointe ####
         return(mat_count_occurence/\
