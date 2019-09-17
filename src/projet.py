@@ -255,7 +255,9 @@ def analysis_mutual_information():
 
     parser.add_argument("-py", nargs="?", \
         help="generate the structure network according to the MI matrix" + \
-             " on pymol\ntake in argument the pdb file of the structure")
+             " on pymol\ntake in argument the pdb file of the structure\n" + \
+             "warning: your residue numbering have to start at 1 in your" + \
+             " pdb file.")
     parser.add_argument("-omi", nargs="?",\
         help="generate an output file containing the mutual information" + \
              " matrix ",\
@@ -265,9 +267,9 @@ def analysis_mutual_information():
         help="show the heatmap of the mutual information matrix")
 
     parser.add_argument("input_topology",\
-        help="number of molecular dynamics to analyse")
+        help="topology file of the molecular dynamics")
     parser.add_argument("input_trajectory",\
-        help="number of molecular dynamics to analyse")
+        help="trajectory file of the molecular dynamics")
 
     args = parser.parse_args()
 
