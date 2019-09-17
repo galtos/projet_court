@@ -86,10 +86,10 @@ class Statistique():
                                      np.zeros((SA_SIZE, SA_SIZE)),\
                                      columns = SA_LETTERS, index = SA_LETTERS) 
 
-        for i in range(len(self.md_sa_seq)-1):
-            for j in range(len(self.md_sa_seq[0])):
+        for i in range(len(self.md_sa_seq)):
+            for j in range(len(self.md_sa_seq[0])-1):
                 mat_count_occurence[self.md_sa_seq[i][j]]\
-                                   [self.md_sa_seq[i+1][j]] += 1
+                                   [self.md_sa_seq[i][j+1]] += 1
         
         ####probabilité jointe ####
         return(mat_count_occurence/\
@@ -238,11 +238,11 @@ if __name__=="__main__":
     stat = Statistique(dt.md_sa_seq)
 
     MI = stat.mutual_information()
-
+    print(MI)
     mat_visual = Visualisation(MI)
     
-    
-    #mat_visual.visualize_matrice_mi()
+    if args.hmap:
+        mat_visual.visualize_matrice_mi()
 
     if args.omi:
         mat_visual.write_mi_csv(args)
@@ -262,7 +262,7 @@ if __name__=="__main__":
                     except ValueError:
                         print("This is not a valid number. Try again.")          
         else:
-            threshold = np.max(np.max(self.matrice_MI))/2
+            threshold = np.max(np.max(MI))/2
         mat_visual.show_pymol_network(args.py, threshold)
 
 
