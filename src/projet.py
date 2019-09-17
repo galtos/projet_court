@@ -232,8 +232,10 @@ class Visualisation(object):
                 if self.matrice_mi[i][j] > line_threshold:
 
                     input_pymol.write("distance {}_{},".format(i + 1, j + 1)+\
-            "name CA and resi {}, ".format(i + 1)+ "name CA and resi {}\n".format(j + 1))
-                    input_pymol.write("hide labels, "+"{}_{}\n".format(i + 1, j + 1))
+                                      "name CA and resi {}, ".format(i + 1) +\
+                                      "name CA and resi {}\n".format(j + 1))
+                    input_pymol.write("hide labels, "+"{}_{}\n".format(i + 1,\
+                                                                       j + 1))
 
         input_pymol.close()
         os.system("pymol -p pymol_tmp.pml")
