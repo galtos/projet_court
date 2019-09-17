@@ -150,7 +150,9 @@ class Visualisation():
         """
         Represent the mutual information matrix in form of a heatmap
         """
-        sns.heatmap(self.matrice_MI)
+        ax = plt.axes()  
+        sns.heatmap(self.matrice_MI, ax = ax)
+        ax.set_title("Heatmap of the compute mutual information for the different positions")
         plt.show()
 
     def color_palette(self):
@@ -173,20 +175,18 @@ class Visualisation():
         return color
         
             
-    def show_pymol_network(self, input_pdb):
+    def show_pymol_network(self, input_pdb, line_threshold):
         """
         launch pymol and read a pml file which color the résidues according their 
         significance in the network made with the mutual information. Put a line between 
-        the important residues (>treshold).
-        the treshold is is the maximum value of the matrix divided by 2 but can be given by the user
+        the important residues (>threshold).
+        the threshold is is the maximum value of the matrix divided by 2 but can be given by the user
         """
         input_pymol = open("pymol_tmp.pml","w")
         input_pymol.write("load "+input_pdb+"\n")
         input_pymol.write("set dash_gap, 0\n")
         input_pymol.write("set dash_width, 2\n")
         input_pymol.write("preset.pretty(selection='all')\n")
-        
-        line_treshold = np.max(np.max(self.matrice_MI))/2
         
         color = np.max(self.matrice_MI)/np.max(np.max(self.matrice_MI))
 
@@ -201,7 +201,7 @@ class Visualisation():
             input_pymol.write("color color_{}, resi {}\n".format(i,i+1))
         
             for j in range(i, len(self.matrice_MI)):
-                if self.matrice_MI[i][j] > line_treshold:
+                if self.matrice_MI[i][j] > line_threshold:
 
                     input_pymol.write("distance {}_{},".format(i + 1,j + 1)+\
             "name CA and resi {}, ".format(i + 1)+ "name CA and resi {}\n".format(j + 1))
@@ -226,6 +226,8 @@ if __name__=="__main__":
     parser.add_argument("-omi", nargs = "?",\
      help = "generate an output file containing the mutual information matrix ", const = "mi_matrix.csv")
     
+    parser.add_argument("-hmap", help = "show the heatmap of the mutual information matrix")
+    
     parser.add_argument("input_topology", help = "number of molecular dynamics to analyse")
     parser.add_argument("input_trajectory", help = "number of molecular dynamics to analyse")
     
@@ -235,16 +237,33 @@ if __name__=="__main__":
 
     stat = Statistique(dt.md_sa_seq)
 
-    #stat.matrice_p_a()
-    #stat.matrice_p_ab()
     MI = stat.mutual_information()
-    #MI2 = [[1,2,3],[1,1,1],[3,3,3]]
+
     mat_visual = Visualisation(MI)
-    ##mat_visual.visualize_matrice_mi()
-    mat_visual.write_mi_csv(args)
-    print(MI)
+    
+    
+    #mat_visual.visualize_matrice_mi()
+
+    if args.omi:
+        mat_visual.write_mi_csv(args)
+
     if args.py:
-        mat_visual.show_pymol_network(args.py)
+        change_threshold = input("You asked for the network visualization with pymol\n" + \
+        "do you want to change the threshold for the network representation ? (y/n) :")
+        while change_threshold != "y" and change_threshold != "n":
+            change_threshold = input("bad input.\nDo you want to change the threshold for the network representation ? (y/n) : ")
+        if change_threshold == "y":
+            threshold = max(MI.max()) + 1
+            while threshold >= max(MI.max()) or threshold <= min(MI.max()):
+                while True:
+                    try:
+                        threshold = int(input("Value of the threshold: (max value = {:.1f} ; min value = {:.1f}):".format(max(MI.max()),min(MI.min()))))
+                        break
+                    except ValueError:
+                        print("This is not a valid number. Try again.")          
+        else:
+            threshold = np.max(np.max(self.matrice_MI))/2
+        mat_visual.show_pymol_network(args.py, threshold)
 
 
 
