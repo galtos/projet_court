@@ -163,7 +163,7 @@ class Visualization(object):
 
     def write_mi_csv(self, args):
         """
-        Write a csv file containing the utual inforamtion matrix
+        Write a csv file containing the mutual inforamtion matrix
         """
         file_csv = open(args.omi, "w")
         for i in range(len(self.matrice_mi)):
