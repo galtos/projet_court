@@ -61,7 +61,7 @@ class AssignationPbxplore(object):
         if args.f:
             file_output_fasta.close()
 
-class Statistique(object):
+class Statistics(object):
     """
     This class contain the differents methods to perform the statistics
     analysis of the set of structural letters of the structure during the
@@ -111,7 +111,6 @@ class Statistique(object):
                 mat_count_occurence[self.md_sa_seq[i][j]]\
                                    [self.md_sa_seq[i+1][j]] += 1
 
-        ####probabilité jointe ####
         return mat_count_occurence/(len(self.md_sa_seq)*len(self.md_sa_seq[0]))
 
     def mutual_information_i(self, i, j, mat_p_a, mat_p_ab):
@@ -153,7 +152,7 @@ class Statistique(object):
                                                 i, j, mat_p_a, mat_p_ab)
         return mutual_information
 
-class Visualisation(object):
+class Visualization(object):
     """
     Contains the methods for the visualization of the mutual information matrix
     with heatmap and a network representation with pymol. This class also allow
@@ -256,6 +255,8 @@ def analysis_mutual_information():
     parser.add_argument("-py", nargs="?", \
         help="generate the structure network according to the MI matrix" + \
              " on pymol\ntake in argument the pdb file of the structure\n" + \
+             "save a .pml file that can be reused with pymol to see again\n" +\
+             "the visualization." + \
              "warning: your residue numbering have to start at 1 in your" + \
              " pdb file.")
     parser.add_argument("-omi", nargs="?",\
@@ -263,7 +264,8 @@ def analysis_mutual_information():
              " matrix ",\
         const="mi_matrix.csv")
 
-    parser.add_argument("-hmap",\
+    parser.add_argument("-hmap", \
+        action="store_true",\
         help="show the heatmap of the mutual information matrix")
 
     parser.add_argument("input_topology",\
@@ -275,11 +277,11 @@ def analysis_mutual_information():
 
     pbxplore_seq_md = AssignationPbxplore(args)
 
-    stats_mi = Statistique(pbxplore_seq_md.md_sa_seq)
+    stats_mi = Statistics(pbxplore_seq_md.md_sa_seq)
 
     matrix_mi = stats_mi.mutual_information()
 
-    mat_visual = Visualisation(matrix_mi)
+    mat_visual = Visualization(matrix_mi)
 
     if args.hmap:
         mat_visual.visualize_matrice_mi()
