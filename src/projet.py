@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 Read a molecular dynamics and assign for each frames protein blocs[1]
-The program then compue the mutual information matrix and represent the matrix
-in the form of an heatmap and/or a structure network with pymol[2].
+The program then compute the mutual information matrix and represent the matrix
+in the form of a heatmap and/or a structure network with pymol[2].
 This program is inspired by GSATools[3].
 
 2019 - Guillaume OLLITRAULT
@@ -63,10 +63,10 @@ class AssignationPbxplore(object):
 
 class Statistics(object):
     """
-    This class contain the differents methods to perform the statistics
+    This class contains the different methods to perform the statistics
     analysis of the set of structural letters of the structure during the
     trajectory.
-    This class actually compute the mutual information.
+    This class compute the mutual information.
     It takes one argument:
     - the set of structural letters of the(md_sa_seq)
     """
@@ -92,7 +92,7 @@ class Statistics(object):
         """
         Method calculate the probability for a two set of structural letters to
         occur one after an other during the molecular dynamics. It count the
-        number of time a set of structural letts is seen between two frame of
+        number of time a set of structural letters is seen between two frame of
         the molecular dynamics.
         ex: in the first frame in the position 1 the letter "a" is seen and in
         the frame 2 at the position 1 the letter "b" is seen.
@@ -202,10 +202,10 @@ class Visualization(object):
 
     def show_pymol_network(self, input_pdb, line_threshold):
         """
-        launch pymol and read a pml file which color the résidues according
+        launch pymol and read a pml file which color the residues according
         their significance in the network made with the mutual information.
         Put a line between the important residues (>threshold).
-        the threshold is is the maximum value of the matrix divided by 2 but
+        the threshold is the maximum value of the matrix divided by 2 but
         can be given by the user.
         """
         input_pymol = open("pymol_tmp.pml", "w")
